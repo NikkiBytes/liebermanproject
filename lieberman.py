@@ -5,14 +5,15 @@ import ldap
 
 active = []
 users = []
+
 computers = []
 userComp = []
 
 #RELEVANT CREDENTIALS
 
 host = 'LDAP://USCLTDC03.epri.com'
-dn = 'anichollette@epri.com'
-pw = 'Coc4Col444'
+dn = 'xxxxx'
+pw = 'xxxxxx'
 
 
 #CONNECT TO LDAP SERVER
@@ -55,6 +56,9 @@ for x in compList2:
 	computers.append(t) 
 
 #REFINE USER LIST
+#USER LIST CONTAINS givenName, sn, accountID 
+
+#IDEA- CAN I CALL getUserFile.py TO REDUCE COMPLEXITY
 
 	
 for x in list2:
@@ -75,10 +79,29 @@ for x in list2:
 
 	t = [fn, ln, id, n]
 	users.append(t)
+	
+	
+#FINAL LIST (first_name, last_name, acctID, 'description'[fn,ln])
+	
+with open('usersID.txt', 'w') as f:
+	for x in users:
+		id = x.split(',')[2]
+			if id != none:
+				f.write(id + '\n')
 
+f.close()
+
+# RUN POWERSHELL COMMAND TO FIND ACTIVE USERS#'sub logic', equivalent of a table				
+Get-Content C:\users\pnac001\Documents\scripts\Lieberman\usersID.txt | Get-ADUser | select sAMAccountname, Enabled | Export-CSV C:\users\pnac001\Documents\scripts\Lieberman\AcctStat.txt
+	
+	
+	
+##############################################################
 
 #MATCH COMPUTER W/ USER
-#ADD MORE FILTER HERE
+#MUST HAVE FILE FROM POWERSHELL COMMAND ('AcctStat.txt')
+
+
 with open('AcctStat.txt', 'r') as f: 
 	for l in f:
 		if not l.startswith("#") and not l.startswith("sAMAccountname"):
@@ -93,7 +116,7 @@ f.close()
 
 
 for x in computers:
-	for v in users:
+	for v in usersA:
 		acctName = v[3]
 		acctN = x[1]
 		for z in active:
